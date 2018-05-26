@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <kanban-board :stages="stages" :blocks="blocks" @update-block="updateBlock">
-      <div v-for="(block, index) in blocks" :slot="block.id">
+      <div v-for="block in blocks" :slot="block.id" :key="block.id">
     <div>
       <strong>id:</strong> {{ block.id }}
     </div>
@@ -47,7 +47,7 @@ export default {
             this.listPrimitive = listPrimitive;
             this.blocks = listPrimitive.getAll();
             listPrimitive.onItemUpdated(item => {
-              this.blocks[item.index] = item.value;
+              this.blocks.splice(item.index, 1, item.value);
             });
           })
           .catch(error => {
@@ -58,7 +58,7 @@ export default {
                   this.listPrimitive = listPrimitive;
                   this.blocks = listPrimitive.getAll();
                   listPrimitive.onItemUpdated(item => {
-                    this.blocks[item.index] = item.value;
+                    this.blocks.splice(item.index, 1, item.value);
                   });
                 })
                 .catch(console.log);
