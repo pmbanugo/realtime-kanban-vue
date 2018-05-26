@@ -2,6 +2,8 @@
 
 > A realtime kanban board in Vue.js and Hamoni Sync
 
+![realtime-kanban-vue.gif](https://cdn.filestackcontent.com/HT9934KSAuY1lbqC0Zng)
+
 ## Build Setup
 
 ```bash
