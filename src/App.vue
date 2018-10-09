@@ -36,36 +36,48 @@ export default {
     }
   },
   mounted: function() {
-    let hamoni = new Hamoni("ACCOUNT_ID", "APP_ID");
+    const accountId = "YOUR_ACCOUNT_ID";
+    const appId = "YOUR_APP_ID";
+    let hamoni;
 
-    hamoni
-      .connect()
-      .then(() => {
-        hamoni
-          .get("board-12")
-          .then(listPrimitive => {
-            this.listPrimitive = listPrimitive;
-            this.blocks = listPrimitive.getAll();
-            listPrimitive.onItemUpdated(item => {
-              this.blocks.splice(item.index, 1, item.value);
+    fetch("https://api.sync.hamoni.tech/v1/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify({ accountId, appId })
+    }).then(token => {
+      hamoni = new Hamoni(token);
+
+      hamoni
+        .connect()
+        .then(() => {
+          hamoni
+            .get("board-12")
+            .then(listPrimitive => {
+              this.listPrimitive = listPrimitive;
+              this.blocks = listPrimitive.getAll();
+              listPrimitive.onItemUpdated(item => {
+                this.blocks.splice(item.index, 1, item.value);
+              });
+            })
+            .catch(error => {
+              if (error == "Error getting state from server") {
+                hamoni
+                  .createList("board-12", blocks)
+                  .then(listPrimitive => {
+                    this.listPrimitive = listPrimitive;
+                    this.blocks = listPrimitive.getAll();
+                    listPrimitive.onItemUpdated(item => {
+                      this.blocks.splice(item.index, 1, item.value);
+                    });
+                  })
+                  .catch(console.log);
+              }
             });
-          })
-          .catch(error => {
-            if (error == "Error getting state from server") {
-              hamoni
-                .createList("board-12", blocks)
-                .then(listPrimitive => {
-                  this.listPrimitive = listPrimitive;
-                  this.blocks = listPrimitive.getAll();
-                  listPrimitive.onItemUpdated(item => {
-                    this.blocks.splice(item.index, 1, item.value);
-                  });
-                })
-                .catch(console.log);
-            }
-          });
-      })
-      .catch(console.log);
+        })
+        .catch(console.log);
+    });
   }
 };
 
