@@ -35,18 +35,19 @@ export default {
       this.listPrimitive.update(id, { id, title: block.title, status });
     }
   },
-  mounted: function() {
+  mounted: async function() {
     const accountId = "YOUR_ACCOUNT_ID";
     const appId = "YOUR_APP_ID";
     let hamoni;
 
-    fetch("https://api.sync.hamoni.tech/v1/token", {
+    const response = await fetch("https://api.sync.hamoni.tech/v1/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
       },
       body: JSON.stringify({ accountId, appId })
-    }).then(token => {
+    });
+    const token = await response.json();
       hamoni = new Hamoni(token);
 
       hamoni
@@ -77,7 +78,7 @@ export default {
             });
         })
         .catch(console.log);
-    });
+    
   }
 };
 
